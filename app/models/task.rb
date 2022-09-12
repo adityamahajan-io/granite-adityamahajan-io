@@ -16,6 +16,7 @@ class Task < ApplicationRecord
   validate :slug_not_changed
   after_commit :log_task_details, on: :create
   before_create :set_slug
+  scope :accessible_to, ->(user_id) { where("task_owner_id = ? OR assigned_user_id = ?", user_id, user_id) }
 
   private
 

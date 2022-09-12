@@ -9,6 +9,11 @@ const create = payload =>
     task: payload,
   });
 
+const generatePdf = () => axios.post("/tasks/report", {});
+
+const download = () =>
+  axios.get("/tasks/report/download", { responseType: "blob" });
+
 const update = ({ slug, payload, quiet = false }) => {
   const path = quiet ? `/tasks/${slug}?quiet` : `/tasks/${slug}`;
   return axios.put(path, {
@@ -27,6 +32,8 @@ const tasksApi = {
   show,
   update,
   destroy,
+  generatePdf,
+  download,
 };
 
 export default tasksApi;
