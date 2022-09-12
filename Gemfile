@@ -64,6 +64,12 @@ group :development, :test do
   # For auto-generating demo data
   gem "faker"
   gem "minitest-bisect"
-  gem "sidekiq"
 
 end
+
+gem "sidekiq"
+
+# For periodic sidekiq jobs
+gem "sidekiq-cron"
+
+gem "letter_opener", group: :development
