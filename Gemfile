@@ -73,3 +73,5 @@ gem "sidekiq"
 gem "sidekiq-cron"
 
 gem "letter_opener", group: :development
+gem "pg", group: [:production]
+gem "sqlite3", "~> 1.4", group: [:development, :test]
