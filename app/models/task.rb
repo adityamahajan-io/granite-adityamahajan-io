@@ -14,7 +14,7 @@ class Task < ApplicationRecord
   validates :title, { presence: true, length: { maximum: MAX_TITLE_LENGTH } }
   validates :slug, { uniqueness: true }
   validate :slug_not_changed
-
+  after_commit :log_task_details, on: :create
   before_create :set_slug
 
   private
