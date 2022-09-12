@@ -3,16 +3,18 @@
 class Task < ApplicationRecord
   MAX_TITLE_LENGTH = 125
   RESTRICTED_ATTRIBUTES = %i[title task_owner_id assigned_user_id]
-  enum progress: { pending: "pending", completed: "completed" }
-  enum status: { unstarred: "unstarred", starred: "starred" }
 
-  has_many :comments, dependent: :destroy
+  enum progress: { pending: "pending", completed: "completed" }
+  enum status: { starred: "starred", unstarred: "unstarred" }
+
   belongs_to :task_owner, foreign_key: "task_owner_id", class_name: "User"
   belongs_to :assigned_user, foreign_key: "assigned_user_id", class_name: "User"
-  validates :title, presence: true, length: { maximum: MAX_TITLE_LENGTH }
-  validates :slug, uniqueness: true
+  has_many :comments, dependent: :destroy
+
+  validates :title, { presence: true, length: { maximum: MAX_TITLE_LENGTH } }
+  validates :slug, { uniqueness: true }
   validate :slug_not_changed
-  before_validation :set_title, if: :title_not_present
+
   before_create :set_slug
 
   private
@@ -28,21 +30,13 @@ class Task < ApplicationRecord
       starred + unstarred
     end
 
-    def title_not_present
-      self.title.blank?
-    end
-
-    def set_title
-      self.title = "Pay electricity bill"
-    end
-
     def set_slug
       title_slug = title.parameterize
       regex_pattern = "slug #{Constants::DB_REGEX_OPERATOR} ?"
       latest_task_slug = Task.where(
         regex_pattern,
         "#{title_slug}$|#{title_slug}-[0-9]+$"
-      ).order("LENGTH(slug) DESC", slug: :desc).first&.slug
+        ).order("LENGTH(slug) DESC", slug: :desc).first&.slug
       slug_count = 0
       if latest_task_slug.present?
         slug_count = latest_task_slug.split("-").last.to_i
@@ -54,7 +48,7 @@ class Task < ApplicationRecord
     end
 
     def slug_not_changed
-      if slug_changed? && self.persisted?
+      if self.persisted? && slug_changed?
         errors.add(:slug, t("task.slug.immutable"))
       end
     end
