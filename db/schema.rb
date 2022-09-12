@@ -14,10 +14,13 @@
 
 ActiveRecord::Schema.define(version: 2022_09_12_125000) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "comments", force: :cascade do |t|
     t.text "content"
-    t.integer "task_id"
-    t.integer "user_id"
+    t.bigint "task_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["task_id"], name: "index_comments_on_task_id"
@@ -25,6 +28,8 @@ ActiveRecord::Schema.define(version: 2022_09_12_125000) do
   end
 
   create_table "logs", force: :cascade do |t|
+    t.integer "task_id"
+    t.text "message"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -32,7 +37,7 @@ ActiveRecord::Schema.define(version: 2022_09_12_125000) do
   create_table "preferences", force: :cascade do |t|
     t.integer "notification_delivery_hour"
     t.boolean "receive_email", default: true, null: false
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_preferences_on_user_id"
@@ -52,7 +57,7 @@ ActiveRecord::Schema.define(version: 2022_09_12_125000) do
 
   create_table "user_notifications", force: :cascade do |t|
     t.date "last_notification_sent_date", null: false
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id", "last_notification_sent_date"],
@@ -67,7 +72,6 @@ ActiveRecord::Schema.define(version: 2022_09_12_125000) do
     t.string "email", null: false
     t.string "password_digest", null: false
     t.string "authentication_token"
-    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "comments", "tasks"
