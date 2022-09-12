@@ -9,6 +9,7 @@ module Granite
   class Application < Rails::Application
     # previous code if any
     config.load_defaults 6.1
+    config.active_job.queue_adapter = :sidekiq
     config.generators do |g|
       g.test_framework :test_unit, fixture: false
     end
