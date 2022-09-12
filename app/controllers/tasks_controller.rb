@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TasksController < ApplicationController
   before_action :load_task!, only: %i[show update destroy]
   after_action :verify_authorized, except: :index
@@ -17,12 +19,13 @@ class TasksController < ApplicationController
 
   def show
     authorize @task
+    @comments = @task.comments.order("created_at DESC")
   end
 
   def update
     authorize @task
     @task.update!(task_params)
-    respond_with_success(t("successfully_updated", entity: "Task")
+    respond_with_success(t("successfully_updated", entity: "Task"))
   end
 
   def destroy
